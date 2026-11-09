@@ -56,6 +56,7 @@ import {
     addOpenRouterSignatures,
 } from '../../prompt-converters.js';
 
+import { getOpenRouterCacheRouting, usesImplicitCachingOnly } from '../../openrouter-cache.js';
 import { readSecret, SECRET_KEYS } from '../secrets.js';
 import {
     getTokenizerModel,
@@ -2329,12 +2330,7 @@ router.post('/generate', async function (request, response) {
                 bodyParams['repetition_penalty'] = request.body.repetition_penalty;
             }
 
-            if (Array.isArray(request.body.provider) && request.body.provider.length > 0) {
-                bodyParams['provider'] = {
-                    allow_fallbacks: request.body.allow_fallbacks ?? true,
-                    order: request.body.provider ?? [],
-                };
-            }
+            Object.assign(bodyParams, getOpenRouterCacheRouting(request.body, request.user.profile.handle));
 
             if (Array.isArray(request.body.quantizations) && request.body.quantizations.length > 0) {
                 bodyParams['provider'] ??= {};
@@ -2366,7 +2362,7 @@ router.post('/generate', async function (request, response) {
 
             const isClaude = /^anthropic\/claude/.test(request.body.model);
             const isGemini = /google\/gemini/.test(request.body.model);
-            const isCacheableGemini = isGemini && await isOpenRouterModelCacheable(request.body.model);
+            const isCacheableGemini = isGemini && !usesImplicitCachingOnly(request.body.model) && await isOpenRouterModelCacheable(request.body.model);
             const enableGeminiSystemPromptCache = getConfigValue('gemini.enableSystemPromptCache', false, 'boolean');
 
             if (Array.isArray(request.body.messages)) {

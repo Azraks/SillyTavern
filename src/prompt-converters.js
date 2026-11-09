@@ -1037,19 +1037,17 @@ export function cachingAtDepthForOpenRouterClaude(messages, cachingAtDepth, ttl)
 
         if (messages[i].role !== previousRoleName) {
             if (depth === cachingAtDepth || depth === cachingAtDepth + 2) {
+                const cacheControl = ttl ? { type: 'ephemeral', ttl: ttl } : { type: 'ephemeral' };
                 const content = messages[i].content;
                 if (typeof content === 'string') {
                     messages[i].content = [{
                         type: 'text',
                         text: content,
-                        cache_control: { type: 'ephemeral', ttl: ttl },
+                        cache_control: cacheControl,
                     }];
                 } else if (content?.length > 0) {
                     const contentPartCount = content.length;
-                    content[contentPartCount - 1].cache_control = {
-                        type: 'ephemeral',
-                        ttl: ttl,
-                    };
+                    content[contentPartCount - 1].cache_control = cacheControl;
                 }
             }
 
