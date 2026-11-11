@@ -1,13 +1,13 @@
 import { createHash } from 'node:crypto';
 
 /**
- * Argon supports implicit caching only. Do not attach explicit cache markers or
- * block its requests on an explicit-cache capability lookup.
+ * Gemini 4 Argon and Gemini 4 Carbon support implicit caching only. Do not attach
+ * explicit cache markers or block their requests on an explicit-cache capability lookup.
  * @param {string} model Model ID
  * @returns {boolean}
  */
 export function usesImplicitCachingOnly(model) {
-    return /^google\/gemini-4-argon(?::[^\s]+)?$/.test(model);
+    return /^google\/gemini-4-(?:argon|carbon)(?::[^\s]+)?$/.test(model);
 }
 
 /**

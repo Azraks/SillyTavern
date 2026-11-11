@@ -19,9 +19,13 @@ test('conversation routing is stable, isolated by chat and user, and hides chat 
     assert.equal(route('alice', {}), undefined);
     assert.equal(route('alice', 'a'.repeat(4097)), undefined);
 });
-test('only Argon variants bypass explicit caching', () => {
+test('only Argon and Carbon variants bypass explicit caching', () => {
     assert.equal(usesImplicitCachingOnly('google/gemini-4-argon'), true);
     assert.equal(usesImplicitCachingOnly('google/gemini-4-argon:free'), true);
+    assert.equal(usesImplicitCachingOnly('google/gemini-4-carbon'), true);
+    assert.equal(usesImplicitCachingOnly('google/gemini-4-carbon:batch'), true);
+    assert.equal(usesImplicitCachingOnly('google/gemini-4-carbon-other'), false);
+    assert.equal(usesImplicitCachingOnly('google/gemini-4-neon'), false);
     assert.equal(usesImplicitCachingOnly('google/gemini-2.5-pro'), false);
     assert.equal(usesImplicitCachingOnly('anthropic/claude-sonnet-4'), false);
     assert.equal(usesImplicitCachingOnly('google/gemini-4-argon-other'), false);
